@@ -1,14 +1,25 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+def euler_scheme(mu, S0, sigma0, p, T, N, alpha):
+    dt = T / N
+    S_values = np.zeros(N+1)
+    S_values[0] = S0
+
+    for j in range(1, N+1):
+        epsilon1 = np.random.normal(0, 1)
+        epsilon2 = np.random.normal(0, 1)
+
+        S_values[j] = S_values[j-1] + mu * S_values[j-1] * dt + sigma0 * S_values[j-1] * np.sqrt(dt) * epsilon1 + p * sigma0 * np.sqrt(dt) * epsilon2
+
+    return S_values
+
 # Parameters
 mu = 0.10   # Drift coefficient
 S0 = 50.0   # Initial stock price
 sigma0 = 0.20  # Initial volatility
-xi0 = 0.20   # Initial long-term volatility
 T = 1.0     # Total time
 N = 1000    # Number of time steps
-dt = T / N   # Time step
 
 # Values for p and alpha
 p_values = [0.0, 1, 0.2, -0.1, -0.2]
@@ -20,15 +31,7 @@ S_values_sets = []
 
 # Simulation for different p and alpha values
 for i in range(len(p_values)):
-    S_values = np.zeros(N+1)
-    S_values[0] = S0
-
-    for j in range(1, N+1):
-        epsilon1 = np.random.normal(0, 1)
-        epsilon2 = np.random.normal(0, 1)
-
-        S_values[j] = S_values[j-1] + mu * S_values[j-1] * dt + sigma0 * S_values[j-1] * np.sqrt(dt) * epsilon1 + p_values[i] * sigma0 * np.sqrt(dt) * epsilon2
-
+    S_values = euler_scheme(mu, S0, sigma0, p_values[i], T, N, alpha_values[i])
     S_values_sets.append(S_values)
 
 # Plot the results
